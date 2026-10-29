@@ -25,6 +25,24 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "compositions": [
+        "./src/ui/compositions"
+      ],
+      "hooks": [
+        "./src/ui/hooks"
+      ],
+      "icons": [
+        "./src/ui/icons"
+      ],
+      "layout": [
+        "./src/ui/layout"
+      ],
+      "primitives": [
+        "./src/ui/primitives"
+      ],
+      "utils": [
+        "./src/ui/utils"
       ]
     }
   },

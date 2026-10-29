@@ -1,0 +1,30 @@
+/*
+ * SDS(figma/sds) 스타일 진입점. 원본 src/index.css에서 토큰·리셋·반응형·아이콘 import와
+ * --global-* 변수만 가져왔다. body/h1/p 등 요소 기본 스타일은 이 앱의 app/globals.css가 담당하므로 넣지 않았다.
+ * app/layout.tsx에서 globals.css보다 먼저 import해야 앱 스타일이 리셋을 덮어쓴다.
+ */
+@import url("./reset.css");
+@import url("./responsive.css");
+@import url("./theme.css");
+@import url("./icons.css");
+
+:root {
+  --global-focus-ring-size: var(--sds-size-stroke-focus-ring);
+  --global-focus-ring-color: rgb(0, 106, 255);
+  --global-line-height-paragraph: 1.4;
+  --global-stack-top: 999;
+  --global-stack-focus: 999;
+  --global-stack-dialog-backdrop: 9999;
+  --global-stack-dialog-container: 99999;
+  --global-container-max-width: 75rem;
+  --global-dialog-max-width: 32rem;
+  --global-tooltip-max-width: calc(var(--global-dialog-max-width) / 2);
+  --global-line-height-body: 1.6;
+}
+
+.display-none-to-flex {
+  display: var(--sds-responsive-display-none-to-flex) !important;
+}
+.display-flex-to-none {
+  display: var(--sds-responsive-display-flex-to-none) !important;
+}

@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { Analytics } from "@/lib/analytics/Analytics";
 import { OFFICIAL_PASSPORT_URL, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+// SDS 토큰·리셋은 앱 스타일보다 먼저 불러 globals.css가 덮어쓰게 한다.
+import "@/src/sds.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
