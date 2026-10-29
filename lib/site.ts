@@ -1,0 +1,25 @@
+/** 사이트 전역 설정. 환경 변수는 .env.example 참고. */
+
+export const SITE_NAME = "여권 영문 이름 변환기";
+export const SITE_DESCRIPTION =
+  "한글 이름을 입력하면 국어의 로마자 표기법 기준 여권 영문 이름과 많이 쓰는 관용 표기를 함께 보여주고 바로 복사할 수 있습니다. 이름은 서버로 보내지 않습니다.";
+
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
+
+export function absoluteUrl(path: string): string {
+  return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+/** 외교부 여권안내 공식 페이지. 안내 문구의 근거이며 페이지에 출처·확인 날짜를 함께 표시한다. */
+export const OFFICIAL_PASSPORT_URL = "https://www.passport.go.kr";
+export const OFFICIAL_PASSPORT_NAME_RULE_URL =
+  "https://www.passport.go.kr/home/kor/contents.do?menuPos=37";
+export const OFFICIAL_SOURCE_CHECKED_AT = "2026-10-29";
+
+/** 국립국어원 로마자 표기법 안내 */
+export const KOREAN_ROMANIZATION_RULE_URL =
+  "https://www.korean.go.kr/front/page/pageView.do?page_id=P000149&mn_id=99";
+
+/** 외교부 여권안내 '로마자성명 변경 허용 요건' 페이지 */
+export const OFFICIAL_PASSPORT_NAME_CHANGE_URL =
+  "https://www.passport.go.kr/home/kor/contents.do?menuPos=39";
