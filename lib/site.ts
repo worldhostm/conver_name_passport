@@ -4,7 +4,24 @@ export const SITE_NAME = "여권 영문 이름 변환기";
 export const SITE_DESCRIPTION =
   "한글 이름을 입력하면 국어의 로마자 표기법 기준 여권 영문 이름과 많이 쓰는 관용 표기를 함께 보여주고 바로 복사할 수 있습니다. 이름은 서버로 보내지 않습니다.";
 
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
+/**
+ * 사이트 절대 주소. 우선순위:
+ * 1) NEXT_PUBLIC_SITE_URL(커스텀 도메인을 쓰면 반드시 설정)
+ * 2) Vercel이 빌드 시 자동 주입하는 프로덕션 도메인(VERCEL_PROJECT_PRODUCTION_URL)
+ * 3) 프리뷰 배포 주소(VERCEL_URL)
+ * 4) 로컬 개발 서버
+ * canonical, OG, sitemap, robots가 모두 이 값을 쓰므로 localhost가 배포되면 색인이 되지 않는다.
+ */
+function resolveSiteUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
+  if (explicit) return explicit.replace(/\/$/, "");
+  const vercelProd = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  if (vercelProd) return `https://${vercelProd}`;
+  const vercelPreview = process.env.VERCEL_URL;
+  if (vercelPreview) return `https://${vercelPreview}`;
+  return "http://localhost:3000";
+}
+export const SITE_URL = resolveSiteUrl();
 
 export function absoluteUrl(path: string): string {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
