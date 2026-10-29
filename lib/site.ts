@@ -2,7 +2,7 @@
 
 export const SITE_NAME = "여권 영문 이름 변환기";
 export const SITE_DESCRIPTION =
-  "한글 이름을 입력하면 국어의 로마자 표기법 기준 여권 영문 이름과 많이 쓰는 관용 표기를 함께 보여주고 바로 복사할 수 있습니다. 이름은 서버로 보내지 않습니다.";
+  "여권 이름 변환기. 한글 이름을 영어로 바꿔 로마자 표기법 기준 여권 영문 이름과 많이 쓰는 관용 표기(Kim, Lee, Park)를 함께 보여주고 바로 복사합니다. 이름은 서버로 보내지 않습니다.";
 
 /**
  * 사이트 절대 주소. 우선순위:
@@ -40,6 +40,11 @@ export const KOREAN_ROMANIZATION_RULE_URL =
 /** 외교부 여권안내 '로마자성명 변경 허용 요건' 페이지 */
 export const OFFICIAL_PASSPORT_NAME_CHANGE_URL =
   "https://www.passport.go.kr/home/kor/contents.do?menuPos=39";
+
+/** 로마자 단어 뒤에 붙는 목적격 조사. 모음·묵음 h·y로 끝나면 '를'(Lee를, Noh를), 그 외 '을'(Park을, Kim을). */
+export function objectParticle(word: string): "을" | "를" {
+  return /[aeiouyh]$/i.test(word) ? "를" : "을";
+}
 
 /** 콘텐츠 최초 공개일·최근 갱신일(ISO). sitemap lastmod, Article/HowTo 구조화 데이터에 쓴다. 내용을 고치면 UPDATED를 올린다. */
 export const CONTENT_PUBLISHED_AT = "2026-10-29";

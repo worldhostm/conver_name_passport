@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { TrackPageView } from "@/lib/analytics/TrackPageView";
 import { SURNAMES, findSurnameBySlug, type SurnameEntry } from "@/data/surnames";
 import { applyCase, explainSyllable, romanizeGivenName, romanizeSurname } from "@/lib/romanize";
-import { absoluteUrl, clampDescription } from "@/lib/site";
+import { absoluteUrl, clampDescription, objectParticle } from "@/lib/site";
 import { Breadcrumbs } from "../../_components/Breadcrumbs";
 import { Converter } from "../../_components/Converter";
 import { Faq } from "../../_components/Faq";
@@ -25,18 +25,33 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const entry = findSurnameBySlug(slug);
   if (!entry) return {};
   const spellings = spellingList(entry);
-  const title = `${entry.hangul} 영어로 — 여권 영문 표기 ${spellings}`;
+  const standard = capitalize(romanizeSurname(entry.hangul));
+  const primary = entry.common[0];
+  // 두 음절 성씨는 표기가 길어 title이 60자를 넘기 쉬우므로 두 개까지만 넣는다.
+  const titleSpellings = spellingList(entry, entry.hangul.length > 1 ? 2 : 3).replace(/, /g, "·");
+  const title = `${entry.hangul} 영어로 ${titleSpellings}: ${entry.hangul}씨 여권 영문 이름 표기`;
+  const standardNote = standard === primary ? `${primary}(로마자 표기법과 같음)` : `${primary}, 로마자 표기법으로는 ${standard}`;
+  const lastSpelling = spellings.split(", ").at(-1) ?? primary;
   const description = clampDescription(
-    `${entry.hangul}씨 여권 영문 이름 표기: 가장 많이 쓰는 ${entry.common[0]}, 로마자 표기법 기준 ${capitalize(
-      romanizeSurname(entry.hangul),
-    )}. ${entry.note}`,
+    `${entry.hangul} 영어로는 ${standardNote}. ${entry.hangul}씨 여권 영문 이름 표기 후보 ${spellings}${objectParticle(
+      lastSpelling,
+    )} 비교하고 가족 표기와 맞추는 기준을 안내합니다. ${entry.note}`,
   );
   return {
     title,
     description,
     alternates: { canonical: absoluteUrl(`/surname/${entry.slug}`) },
     openGraph: { title, description, url: absoluteUrl(`/surname/${entry.slug}`) },
-    keywords: [`${entry.hangul} 영어로`, `${entry.hangul}씨 영문 표기`, `${entry.hangul} 여권 영문`, ...entry.common],
+    keywords: [
+      `${entry.hangul} 영어로`,
+      `${entry.hangul}씨 영어로`,
+      `${entry.hangul} 영문 표기`,
+      `${entry.hangul}씨 영문 표기`,
+      `${entry.hangul} 여권 영문 이름`,
+      `${entry.hangul} 영문 이름`,
+      `${entry.hangul} 로마자 표기`,
+      ...entry.common,
+    ],
   };
 }
 
@@ -55,6 +70,10 @@ export default async function SurnamePage({ params }: { params: Promise<Params> 
   const related = [...SURNAMES.slice(Math.max(0, index - 3), index), ...SURNAMES.slice(index + 1, index + 4)];
 
   const faq = [
+    {
+      question: `${entry.hangul} 영어로 쓰면 무엇인가요?`,
+      answer: `${entry.hangul} 영어로 가장 많이 쓰는 표기는 ${primary}이고, 국어의 로마자 표기법대로 적으면 ${standard}입니다. 여권, 항공권, 해외 서류에는 같은 표기를 써야 합니다.`,
+    },
     {
       question: `${entry.hangul}씨는 여권에 영어로 어떻게 쓰나요?`,
       answer: `가장 많이 쓰는 표기는 ${primary}입니다. 국어의 로마자 표기법대로 적으면 ${standard}이며, ${
@@ -79,10 +98,12 @@ export default async function SurnamePage({ params }: { params: Promise<Params> 
       <TrackPageView pageType="surname" />
       <Breadcrumbs items={[{ name: "성씨별 표기", href: "/surname" }, { name: `${entry.hangul} ${primary}` }]} />
       <h1>
-        {entry.hangul} 영어로: 여권 영문 표기 {spellingList(entry)}
+        {entry.hangul} 영어로: {entry.hangul}씨 여권 영문 이름 표기 {spellingList(entry)}
       </h1>
       <p className="lead">
-        {entry.hangul}씨는 여권에서 <b>{primary}</b>를 가장 많이 씁니다. 국어의 로마자 표기법대로 적으면 <b>{standard}</b>
+        성 &lsquo;{entry.hangul}&rsquo;의 가장 흔한 영어 표기는 <b>{primary}</b>입니다. {entry.hangul}씨 여권 영문 이름에서도{" "}
+        {primary}
+        {objectParticle(primary)} 가장 많이 쓰고, 국어의 로마자 표기법대로 적으면 <b>{standard}</b>
         {standardIsCommon ? "로 같습니다." : "입니다."} {entry.note}
       </p>
 
@@ -216,8 +237,8 @@ function capitalize(s: string): string {
   return s ? s[0].toUpperCase() + s.slice(1) : s;
 }
 
-function spellingList(entry: SurnameEntry): string {
+function spellingList(entry: SurnameEntry, limit = 3): string {
   const standard = capitalize(romanizeSurname(entry.hangul));
   const all = entry.common.includes(standard) ? entry.common : [...entry.common, standard];
-  return all.slice(0, 3).join(", ");
+  return all.slice(0, limit).join(", ");
 }

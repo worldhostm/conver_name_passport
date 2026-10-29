@@ -10,15 +10,24 @@ import { TrackedLink } from "./_components/TrackedLink";
 import { PassportNotices } from "./_components/PassportNotices";
 
 export const metadata: Metadata = {
-  title: { absolute: `${SITE_NAME} — 한글 이름을 여권 영문 표기로` },
+  title: { absolute: `${SITE_NAME}: 한글 이름 영어로, 여권 이름 변환` },
   description: SITE_DESCRIPTION,
   alternates: { canonical: absoluteUrl("/") },
   openGraph: {
-    title: `${SITE_NAME} — 한글 이름을 여권 영문 표기로`,
+    title: `${SITE_NAME}: 한글 이름 영어로, 여권 이름 변환`,
     description: SITE_DESCRIPTION,
     url: absoluteUrl("/"),
   },
-  keywords: ["여권 영문 이름", "영문 이름 변환", "한글 이름 영어로", "로마자 표기법 이름", "여권 영문 표기"],
+  keywords: [
+    "여권 영문 이름 변환기",
+    "여권 이름 변환기",
+    "여권 영문 이름",
+    "영문 이름 변환기",
+    "한글 이름 영어로",
+    "한글 이름 영문 변환",
+    "로마자 표기법 이름",
+    "여권 영문 표기",
+  ],
 };
 
 const FAQ = [
