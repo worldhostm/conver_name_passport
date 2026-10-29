@@ -23,3 +23,21 @@ export const KOREAN_ROMANIZATION_RULE_URL =
 /** 외교부 여권안내 '로마자성명 변경 허용 요건' 페이지 */
 export const OFFICIAL_PASSPORT_NAME_CHANGE_URL =
   "https://www.passport.go.kr/home/kor/contents.do?menuPos=39";
+
+/** 콘텐츠 최초 공개일·최근 갱신일(ISO). sitemap lastmod, Article/HowTo 구조화 데이터에 쓴다. 내용을 고치면 UPDATED를 올린다. */
+export const CONTENT_PUBLISHED_AT = "2026-10-29";
+export const CONTENT_UPDATED_AT = "2026-10-29";
+
+/** 검색엔진 소유 확인 코드. 비어 있으면 메타 태그를 넣지 않는다. */
+export const GOOGLE_SITE_VERIFICATION = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? "";
+export const NAVER_SITE_VERIFICATION = process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION ?? "";
+
+/** meta description은 검색 결과에서 잘리지 않도록 한국어 기준 약 150자로 자른다. */
+export const MAX_DESCRIPTION_LENGTH = 150;
+export function clampDescription(text: string, max = MAX_DESCRIPTION_LENGTH): string {
+  const normalized = text.replace(/\s+/g, " ").trim();
+  if (normalized.length <= max) return normalized;
+  const cut = normalized.slice(0, max - 1);
+  const lastStop = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("다. "));
+  return (lastStop > max * 0.6 ? cut.slice(0, lastStop + 1) : cut.trimEnd() + "…").trim();
+}
