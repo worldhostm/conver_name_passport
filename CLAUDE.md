@@ -1,0 +1,28 @@
+# 여권 영문 이름 변환기 — Claude Code 규칙
+
+## 구조
+- app/            : 페이지 (main, surname/[slug], guide/*, privacy). UI 컴포넌트는 app/_components/
+- lib/romanize/   : 변환 로직 (순수 함수, React 의존 금지)
+- lib/analytics/  : GA 이벤트 (events.ts의 track()만 사용)
+- lib/site.ts     : 사이트 이름·URL·출처 링크 상수
+- data/           : 성씨 관용 표기 등 데이터
+- docs/           : analytics.md, decisions.md, changelog.md
+새 최상위 폴더를 만들지 말 것.
+
+## 코드
+- 표기 규칙 변경 시 테스트 추가 + 근거 조항 주석 필수 (lib/romanize/*.test.ts)
+- 성씨 표기는 data/surnames.ts에서만 수정
+- 세 번 반복되기 전에는 공통화하지 않기
+- 300줄 넘는 파일은 분리 제안
+
+## 분석과 개인정보
+- gtag 직접 호출 금지, track()만 사용 (gtag 로더는 lib/analytics/Analytics.tsx 한 곳)
+- 이벤트 추가 시 docs/analytics.md 갱신
+- 이름 문자열은 이벤트, 로그, URL 어디에도 넣지 않기
+
+## 작업 방식
+- 한 작업 = 한 목적, 범위 밖 변경은 제안만
+- 새 패키지는 이유와 대안 설명 후 승인받기
+- 끝나면 `npm run lint`, `npm run typecheck`, `npm test` 실행
+- 변경 요약에 "사람이 확인할 것" 목록 포함
+- 설계 결정은 docs/decisions.md에 한 줄로 기록
