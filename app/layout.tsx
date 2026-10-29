@@ -1,7 +1,17 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { Analytics } from "@/lib/analytics/Analytics";
-import { OFFICIAL_PASSPORT_URL, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import { ANALYTICS_ENABLED } from "@/lib/analytics/events";
+import {
+  GOOGLE_SITE_VERIFICATION,
+  NAVER_SITE_VERIFICATION,
+  OFFICIAL_PASSPORT_URL,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+  absoluteUrl,
+} from "@/lib/site";
+import { JsonLd } from "./_components/JsonLd";
 // SDS 토큰·리셋은 앱 스타일보다 먼저 불러 globals.css가 덮어쓰게 한다.
 import "@/src/sds.css";
 import "./globals.css";
@@ -18,8 +28,14 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     locale: "ko_KR",
   },
-  twitter: { card: "summary" },
-  robots: { index: true, follow: true },
+  twitter: { card: "summary_large_image" },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
+  applicationName: SITE_NAME,
+  formatDetection: { telephone: false, email: false, address: false },
+  verification: {
+    ...(GOOGLE_SITE_VERIFICATION ? { google: GOOGLE_SITE_VERIFICATION } : {}),
+    ...(NAVER_SITE_VERIFICATION ? { other: { "naver-site-verification": NAVER_SITE_VERIFICATION } } : {}),
+  },
 };
 
 export const viewport: Viewport = {
@@ -34,7 +50,22 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
+      {ANALYTICS_ENABLED && (
+        <head>
+          <link rel="preconnect" href="https://www.googletagmanager.com" />
+        </head>
+      )}
       <body>
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: SITE_NAME,
+            url: absoluteUrl("/"),
+            description: SITE_DESCRIPTION,
+            inLanguage: "ko",
+          }}
+        />
         <header className="site-header">
           <div className="container">
             <Link href="/" className="brand">

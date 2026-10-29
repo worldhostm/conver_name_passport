@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { TrackPageView } from "@/lib/analytics/TrackPageView";
-import { OFFICIAL_PASSPORT_NAME_RULE_URL, OFFICIAL_SOURCE_CHECKED_AT, absoluteUrl } from "@/lib/site";
+import { OFFICIAL_PASSPORT_NAME_RULE_URL, OFFICIAL_SOURCE_CHECKED_AT, CONTENT_PUBLISHED_AT, CONTENT_UPDATED_AT, absoluteUrl } from "@/lib/site";
+import { ArticleJsonLd } from "../../_components/ArticleJsonLd";
+import { JsonLd } from "../../_components/JsonLd";
+import { Breadcrumbs } from "../../_components/Breadcrumbs";
+import { RelatedGuides } from "../../_components/RelatedGuides";
 import { Faq } from "../../_components/Faq";
 import { TrackedLink } from "../../_components/TrackedLink";
 
@@ -12,8 +16,25 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: absoluteUrl("/guide/passport-name") },
-  openGraph: { title: TITLE, description: DESCRIPTION, url: absoluteUrl("/guide/passport-name") },
+  openGraph: {
+    type: "article",
+    title: TITLE,
+    description: DESCRIPTION,
+    url: absoluteUrl("/guide/passport-name"),
+    publishedTime: CONTENT_PUBLISHED_AT,
+    modifiedTime: CONTENT_UPDATED_AT,
+    images: ["/opengraph-image"],
+  },
 };
+
+const STEPS = [
+  { name: "가족 중 여권이 있는 사람의 성 표기를 먼저 확인한다", text: "부모·배우자·형제의 여권에 적힌 성 표기를 그대로 쓰는 것이 1순위다. 가족 간 표기가 다르면 해외에서 가족 관계 증명을 요구받을 수 있다." },
+  { name: "성은 관용 표기와 규칙 표기를 비교해 고른다", text: "국어의 로마자 표기법 표기(Gim, I, Bak)와 실제 여권에서 많이 쓰는 관용 표기(Kim, Lee, Park)를 비교한다." },
+  { name: "이름 형식을 정한다", text: "붙여쓰기(GILDONG)가 해외 전산에서 가장 문제가 적다. 하이픈과 띄어쓰기도 허용되지만 생략되거나 미들네임으로 처리될 수 있다." },
+  { name: "발음과 표기가 다른 이름인지 확인한다", text: "여권 표기 원칙은 이름의 음운 변화를 반영하지 않는다. 복연은 [보견]으로 소리 나지만 BOKYEON으로 적는다." },
+  { name: "영어 단어와 겹치는지 본다", text: "Gang, Sin, No, Bum처럼 영어 단어와 겹치는 규칙 표기는 Kang, Shin, Noh, Beom 같은 관용 표기가 많이 쓰인다." },
+  { name: "신청서에는 대문자로, 여권 형식 그대로 적는다", text: "여권에는 모두 대문자로 인쇄된다. 변환기의 여권 형식 결과(HONG GILDONG)를 복사해 신청서에 옮긴다." },
+];
 
 const FAQ = [
   {
@@ -36,47 +57,69 @@ export default function Page() {
   return (
     <article className="prose">
       <TrackPageView pageType="guide" />
+      <ArticleJsonLd path="/guide/passport-name" headline={TITLE} description={DESCRIPTION} />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "HowTo",
+          name: "여권 영문 이름 정하는 법",
+          description: DESCRIPTION,
+          inLanguage: "ko",
+          totalTime: "PT10M",
+          step: STEPS.map((step, i) => ({
+            "@type": "HowToStep",
+            position: i + 1,
+            name: step.name,
+            text: step.text,
+            url: absoluteUrl(`/guide/passport-name#step-${i + 1}`),
+          })),
+        }}
+      />
+      <Breadcrumbs items={[{ name: "가이드", href: "/guide" }, { name: "여권 영문 이름 정하는 법" }]} />
       <h1>여권 영문 이름 정하는 법</h1>
       <p className="lead">
         여권의 영문 이름(로마자 성명)은 한 번 정하면 바꾸기 어렵고, 항공권·비자·해외 계정이 모두 이 표기를 따라갑니다. 아래 순서대로
         확인하면 나중에 후회할 가능성을 줄일 수 있습니다.
       </p>
+      <p className="meta-line">
+        최근 갱신 <time dateTime={CONTENT_UPDATED_AT}>{CONTENT_UPDATED_AT}</time>
+      </p>
 
-      <h2>1. 가족 중 여권이 있는 사람의 성 표기를 먼저 확인한다</h2>
+      <h2 id="step-1">1. 가족 중 여권이 있는 사람의 성 표기를 먼저 확인한다</h2>
       <p>
         부모, 배우자, 형제의 여권에 적힌 성 표기를 그대로 쓰는 것이 1순위입니다. 가족 간 성 표기가 다르면 해외 입국 심사나 호텔 예약에서
         가족 관계를 증명해야 하는 상황이 생길 수 있습니다. 자세한 내용은{" "}
         <TrackedLink href="/guide/family-surname">가족과 성 표기 맞추기</TrackedLink>를 보세요.
       </p>
 
-      <h2>2. 성은 관용 표기와 규칙 표기를 비교해 고른다</h2>
+      <h2 id="step-2">2. 성은 관용 표기와 규칙 표기를 비교해 고른다</h2>
       <p>
         가족 표기가 없다면 두 가지를 비교합니다. 국어의 로마자 표기법대로 적은 규칙 표기(김 → Gim, 이 → I, 박 → Bak)와 실제 여권에서 많이
         쓰는 관용 표기(Kim, Lee, Park)입니다. 관용 표기는 외국인이 익숙하게 읽고 한국 성씨로 인식하는 장점이 있고, 규칙 표기는 발음에 더
         가깝습니다. <TrackedLink href="/surname">성씨별 표기 페이지</TrackedLink>에서 성씨마다 어떤 표기가 많이 쓰이는지 볼 수 있습니다.
       </p>
 
-      <h2>3. 이름 형식을 정한다: 붙여쓰기, 하이픈, 띄어쓰기</h2>
+      <h2 id="step-3">3. 이름 형식을 정한다: 붙여쓰기, 하이픈, 띄어쓰기</h2>
       <p>
         외교부는 이름을 붙여 쓰는 것을 원칙으로 하고, 붙임표(-)나 띄어쓰기도 허용합니다. 붙여쓰기(GILDONG)가 해외 전산에서 가장 문제가
         적습니다. 하이픈이나 띄어쓰기는 일부 시스템에서 생략되거나 중간 이름(middle name)으로 처리될 수 있습니다. 차이는{" "}
         <TrackedLink href="/guide/name-format">이름 형식 가이드</TrackedLink>에서 설명합니다.
       </p>
 
-      <h2>4. 발음과 표기가 다른 이름인지 확인한다</h2>
+      <h2 id="step-4">4. 발음과 표기가 다른 이름인지 확인한다</h2>
       <p>
         여권 표기 원칙은 이름의 음운 변화를 반영하지 않습니다. 예를 들어 &lsquo;복연&rsquo;은 발음이 [보견]이지만 규칙 표기는 BOKYEON입니다.
         발음을 살린 표기를 원하면 신청서에 직접 적을 수 있지만, 가족과의 통일과 읽기 쉬움을 함께 따져 보세요. 변환기는 이런 이름에 안내
         문구를 보여줍니다.
       </p>
 
-      <h2>5. 영어 단어와 겹치는지 한 번 더 본다</h2>
+      <h2 id="step-5">5. 영어 단어와 겹치는지 한 번 더 본다</h2>
       <p>
         규칙 표기가 영어 단어와 겹쳐 꺼리는 경우가 있습니다. 강(Gang), 신(Sin), 노(No), 범(Bum)이 대표적이고, 그래서 Kang, Shin, Noh,
         Beom 같은 표기가 많이 쓰입니다. 반대로 Park, Song, Moon처럼 영어 단어와 같아 오히려 읽기 쉬운 표기도 있습니다.
       </p>
 
-      <h2>6. 신청서에는 대문자로, 여권 형식 그대로 적는다</h2>
+      <h2 id="step-6">6. 신청서에는 대문자로, 여권 형식 그대로 적는다</h2>
       <p>
         여권에는 성과 이름이 모두 대문자로 인쇄됩니다. <TrackedLink href="/">변환기</TrackedLink>의 &lsquo;여권 형식&rsquo; 결과(예: HONG
         GILDONG)를 복사해 신청서에 옮기면 됩니다. 영문 이름을 적은 뒤 항공권, 해외 서비스 계정에도 똑같이 쓰세요.
@@ -103,6 +146,8 @@ export default function Page() {
         </a>
         ), 확인 날짜 {OFFICIAL_SOURCE_CHECKED_AT}. 규정은 바뀔 수 있으니 신청 전 공식 페이지를 다시 확인하세요.
       </p>
+
+      <RelatedGuides current="passport-name" />
     </article>
   );
 }

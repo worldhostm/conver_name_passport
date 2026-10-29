@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { TrackPageView } from "@/lib/analytics/TrackPageView";
 import { FINAL_CHARS, INITIAL_CHARS, MEDIAL_CHARS, applyCase, romanizeGivenName, romanizeSurname } from "@/lib/romanize";
 import { FINAL_ROMAN, INITIAL_ROMAN, MEDIAL_ROMAN } from "@/lib/romanize/tables";
-import { KOREAN_ROMANIZATION_RULE_URL, OFFICIAL_SOURCE_CHECKED_AT, absoluteUrl } from "@/lib/site";
+import { KOREAN_ROMANIZATION_RULE_URL, OFFICIAL_SOURCE_CHECKED_AT, CONTENT_PUBLISHED_AT, CONTENT_UPDATED_AT, absoluteUrl } from "@/lib/site";
+import { ArticleJsonLd } from "../../_components/ArticleJsonLd";
+import { Breadcrumbs } from "../../_components/Breadcrumbs";
+import { RelatedGuides } from "../../_components/RelatedGuides";
 import { Faq } from "../../_components/Faq";
 import { TrackedLink } from "../../_components/TrackedLink";
 
@@ -14,7 +17,15 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: absoluteUrl("/guide/romanization") },
-  openGraph: { title: TITLE, description: DESCRIPTION, url: absoluteUrl("/guide/romanization") },
+  openGraph: {
+    type: "article",
+    title: TITLE,
+    description: DESCRIPTION,
+    url: absoluteUrl("/guide/romanization"),
+    publishedTime: CONTENT_PUBLISHED_AT,
+    modifiedTime: CONTENT_UPDATED_AT,
+    images: ["/opengraph-image"],
+  },
 };
 
 const NAME_EXAMPLES: [string, string][] = [
@@ -47,10 +58,15 @@ export default function Page() {
   return (
     <article className="prose">
       <TrackPageView pageType="guide" />
+      <ArticleJsonLd path="/guide/romanization" headline={TITLE} description={DESCRIPTION} />
+      <Breadcrumbs items={[{ name: "가이드", href: "/guide" }, { name: "국어의 로마자 표기법과 이름" }]} />
       <h1>국어의 로마자 표기법과 이름</h1>
       <p className="lead">
         여권 영문 이름의 기준은 문화관광부 고시 제2000-8호 &lsquo;국어의 로마자 표기법&rsquo;입니다. 이름에 적용할 때 필요한 부분만
         골라 정리했습니다.
+      </p>
+      <p className="meta-line">
+        최근 갱신 <time dateTime={CONTENT_UPDATED_AT}>{CONTENT_UPDATED_AT}</time>
       </p>
 
       <h2>인명 규정(제3장 제4항)</h2>
@@ -139,6 +155,8 @@ export default function Page() {
         </a>
         ), 확인 날짜 {OFFICIAL_SOURCE_CHECKED_AT}.
       </p>
+
+      <RelatedGuides current="romanization" />
     </article>
   );
 }

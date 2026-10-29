@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { TrackPageView } from "@/lib/analytics/TrackPageView";
 import { SURNAMES, findSurnameBySlug, type SurnameEntry } from "@/data/surnames";
 import { applyCase, explainSyllable, romanizeGivenName, romanizeSurname } from "@/lib/romanize";
-import { absoluteUrl } from "@/lib/site";
+import { absoluteUrl, clampDescription } from "@/lib/site";
+import { Breadcrumbs } from "../../_components/Breadcrumbs";
 import { Converter } from "../../_components/Converter";
 import { Faq } from "../../_components/Faq";
 import { PassportNotices } from "../../_components/PassportNotices";
@@ -25,9 +26,11 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   if (!entry) return {};
   const spellings = spellingList(entry);
   const title = `${entry.hangul} 영어로 — 여권 영문 표기 ${spellings}`;
-  const description = `${entry.hangul}씨 여권 영문 이름 표기: 가장 많이 쓰는 ${entry.common[0]}, 로마자 표기법 기준 ${capitalize(
-    romanizeSurname(entry.hangul),
-  )}. ${entry.note}`;
+  const description = clampDescription(
+    `${entry.hangul}씨 여권 영문 이름 표기: 가장 많이 쓰는 ${entry.common[0]}, 로마자 표기법 기준 ${capitalize(
+      romanizeSurname(entry.hangul),
+    )}. ${entry.note}`,
+  );
   return {
     title,
     description,
@@ -74,6 +77,7 @@ export default async function SurnamePage({ params }: { params: Promise<Params> 
   return (
     <>
       <TrackPageView pageType="surname" />
+      <Breadcrumbs items={[{ name: "성씨별 표기", href: "/surname" }, { name: `${entry.hangul} ${primary}` }]} />
       <h1>
         {entry.hangul} 영어로: 여권 영문 표기 {spellingList(entry)}
       </h1>

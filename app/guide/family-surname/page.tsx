@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { TrackPageView } from "@/lib/analytics/TrackPageView";
-import { OFFICIAL_PASSPORT_NAME_RULE_URL, OFFICIAL_SOURCE_CHECKED_AT, absoluteUrl } from "@/lib/site";
+import { OFFICIAL_PASSPORT_NAME_RULE_URL, OFFICIAL_SOURCE_CHECKED_AT, CONTENT_PUBLISHED_AT, CONTENT_UPDATED_AT, absoluteUrl } from "@/lib/site";
+import { ArticleJsonLd } from "../../_components/ArticleJsonLd";
+import { Breadcrumbs } from "../../_components/Breadcrumbs";
+import { RelatedGuides } from "../../_components/RelatedGuides";
 import { Faq } from "../../_components/Faq";
 import { TrackedLink } from "../../_components/TrackedLink";
 
@@ -12,7 +15,15 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: absoluteUrl("/guide/family-surname") },
-  openGraph: { title: TITLE, description: DESCRIPTION, url: absoluteUrl("/guide/family-surname") },
+  openGraph: {
+    type: "article",
+    title: TITLE,
+    description: DESCRIPTION,
+    url: absoluteUrl("/guide/family-surname"),
+    publishedTime: CONTENT_PUBLISHED_AT,
+    modifiedTime: CONTENT_UPDATED_AT,
+    images: ["/opengraph-image"],
+  },
 };
 
 const FAQ = [
@@ -47,10 +58,15 @@ export default function Page() {
   return (
     <article className="prose">
       <TrackPageView pageType="guide" />
+      <ArticleJsonLd path="/guide/family-surname" headline={TITLE} description={DESCRIPTION} />
+      <Breadcrumbs items={[{ name: "가이드", href: "/guide" }, { name: "가족과 성 표기 맞추기" }]} />
       <h1>가족과 성 표기 맞추기</h1>
       <p className="lead">
         아이 여권을 처음 만들 때 가장 자주 생기는 실수는 부모와 다른 성 표기를 쓰는 것입니다. 규칙 표기가 더 정확해 보여도, 가족 표기와의
         일치가 우선입니다.
+      </p>
+      <p className="meta-line">
+        최근 갱신 <time dateTime={CONTENT_UPDATED_AT}>{CONTENT_UPDATED_AT}</time>
       </p>
 
       <h2>왜 같아야 하나</h2>
@@ -109,6 +125,8 @@ export default function Page() {
         </a>
         ), 확인 날짜 {OFFICIAL_SOURCE_CHECKED_AT}.
       </p>
+
+      <RelatedGuides current="family-surname" />
     </article>
   );
 }

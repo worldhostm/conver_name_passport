@@ -10,7 +10,7 @@ import { TrackedLink } from "./_components/TrackedLink";
 import { PassportNotices } from "./_components/PassportNotices";
 
 export const metadata: Metadata = {
-  title: `${SITE_NAME} — 한글 이름을 여권 영문 표기로`,
+  title: { absolute: `${SITE_NAME} — 한글 이름을 여권 영문 표기로` },
   description: SITE_DESCRIPTION,
   alternates: { canonical: absoluteUrl("/") },
   openGraph: {

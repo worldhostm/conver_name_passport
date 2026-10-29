@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
 import { TrackPageView } from "@/lib/analytics/TrackPageView";
 import {
+  CONTENT_PUBLISHED_AT,
+  CONTENT_UPDATED_AT,
   OFFICIAL_PASSPORT_NAME_CHANGE_URL,
   OFFICIAL_PASSPORT_NAME_RULE_URL,
   OFFICIAL_SOURCE_CHECKED_AT,
   absoluteUrl,
 } from "@/lib/site";
+import { ArticleJsonLd } from "../../_components/ArticleJsonLd";
+import { Breadcrumbs } from "../../_components/Breadcrumbs";
+import { RelatedGuides } from "../../_components/RelatedGuides";
 import { Faq } from "../../_components/Faq";
 import { TrackedLink } from "../../_components/TrackedLink";
 
@@ -17,7 +22,15 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: absoluteUrl("/guide/name-change") },
-  openGraph: { title: TITLE, description: DESCRIPTION, url: absoluteUrl("/guide/name-change") },
+  openGraph: {
+    type: "article",
+    title: TITLE,
+    description: DESCRIPTION,
+    url: absoluteUrl("/guide/name-change"),
+    publishedTime: CONTENT_PUBLISHED_AT,
+    modifiedTime: CONTENT_UPDATED_AT,
+    images: ["/opengraph-image"],
+  },
 };
 
 const REASONS: { title: string; detail: string }[] = [
@@ -73,10 +86,15 @@ export default function Page() {
   return (
     <article className="prose">
       <TrackPageView pageType="guide" />
+      <ArticleJsonLd path="/guide/name-change" headline={TITLE} description={DESCRIPTION} />
+      <Breadcrumbs items={[{ name: "가이드", href: "/guide" }, { name: "여권 영문 이름 변경" }]} />
       <h1>여권 영문 이름 변경, 가능한 경우</h1>
       <p className="lead">
         여권의 로마자 성명은 재발급 때도 이전과 똑같이 적는 것이 원칙입니다. 여권법 시행령 제3조의2가 정한 사유에 해당할 때만 바꿀 수 있고,
         그래서 처음 정할 때가 가장 중요합니다.
+      </p>
+      <p className="meta-line">
+        최근 갱신 <time dateTime={CONTENT_UPDATED_AT}>{CONTENT_UPDATED_AT}</time>
       </p>
 
       <h2>왜 엄격한가</h2>
@@ -126,6 +144,8 @@ export default function Page() {
         </a>
         ). 확인 날짜 {OFFICIAL_SOURCE_CHECKED_AT}. 요건과 서류는 바뀔 수 있으니 신청 전 공식 페이지를 다시 확인하세요.
       </p>
+
+      <RelatedGuides current="name-change" />
     </article>
   );
 }

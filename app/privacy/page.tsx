@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { OFFICIAL_SOURCE_CHECKED_AT, SITE_NAME, absoluteUrl } from "@/lib/site";
+import { Breadcrumbs } from "../_components/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "개인정보처리방침",
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <article className="prose">
+      <Breadcrumbs items={[{ name: "개인정보처리방침" }]} />
       <h1>개인정보처리방침</h1>
       <p>최종 갱신: {OFFICIAL_SOURCE_CHECKED_AT}</p>
 
