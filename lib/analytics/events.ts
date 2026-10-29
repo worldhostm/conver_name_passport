@@ -60,16 +60,31 @@ declare global {
 
 export const GA_ID = process.env.NEXT_PUBLIC_GA_ID ?? "";
 
+/**
+ * GA 전송 여부. 측정 ID가 있고, 프로덕션 빌드이며, Vercel 프리뷰 배포가 아닐 때만 켠다.
+ * 개발 서버(next dev)와 프리뷰 배포(NEXT_PUBLIC_VERCEL_ENV=preview)의 트래픽은 집계하지 않는다.
+ */
+export const ANALYTICS_ENABLED =
+  Boolean(GA_ID) &&
+  process.env.NODE_ENV === "production" &&
+  (process.env.NEXT_PUBLIC_VERCEL_ENV ?? "production") === "production";
+
 /** 서버 렌더링이나 측정 ID 미설정 환경에서는 조용히 넘어간다. */
 export function track<E extends EventName>(event: E, params: EventParams[E]): void {
   if (typeof window === "undefined") return;
-  if (typeof window.gtag === "function") {
-    window.gtag("event", event, params);
+  if (!ANALYTICS_ENABLED) {
+    if (process.env.NODE_ENV !== "production") console.debug("[analytics]", event, params);
     return;
   }
-  if (process.env.NODE_ENV !== "production") {
-    console.debug("[analytics]", event, params);
+  if (typeof window.gtag !== "function") {
+    // 초기화 스크립트보다 먼저 호출된 경우: gtag는 dataLayer.push 래퍼이므로 같은 방식으로 큐에 넣는다.
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function gtag() {
+      // eslint-disable-next-line prefer-rest-params
+      window.dataLayer!.push(arguments);
+    } as GtagFn;
   }
+  window.gtag("event", event, params);
 }
 
 const INPUT_START_KEY = "cpn:name_input_start";

@@ -5,7 +5,9 @@
 
 ## 설정
 
-- 측정 ID: `NEXT_PUBLIC_GA_ID` 환경 변수. 비어 있으면 로더를 넣지 않고, 개발 모드에서는 콘솔에만 기록한다.
+- 측정 ID: `NEXT_PUBLIC_GA_ID` 환경 변수. Vercel 프로젝트 환경 변수에서 **Production 환경에만** 설정한다. 로컬 `.env.local`에는 넣지 않는다.
+- 전송 조건(`ANALYTICS_ENABLED`): 측정 ID 있음 + 프로덕션 빌드 + Vercel 프리뷰 아님. 개발 서버에서는 콘솔에 `[analytics]`로만 찍힌다. DebugView 확인이 필요하면 프로덕션 사이트에서 Google Analytics Debugger 확장 프로그램을 켜고 본다.
+- 초기화 스크립트(dataLayer, `gtag('config')`)는 `beforeInteractive`로 초기 HTML `<head>`에 들어간다. `track()`은 초기화 전에 호출돼도 dataLayer에 직접 큐잉한다.
 - gtag 로더(`lib/analytics/Analytics.tsx`)는 `send_page_view: false`로 설정하고, 각 페이지의 `<TrackPageView pageType>`가 `page_view`를 직접 보낸다. 그래서 `page_type` 파라미터가 항상 붙는다.
 
 ## 이벤트

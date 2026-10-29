@@ -7,17 +7,20 @@
  */
 
 import Script from "next/script";
-import { GA_ID } from "./events";
+import { ANALYTICS_ENABLED, GA_ID } from "./events";
 
 export function Analytics() {
-  if (!GA_ID) return null;
+  if (!ANALYTICS_ENABLED) return null;
   return (
     <>
       <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
         strategy="afterInteractive"
       />
-      <Script id="ga4-init" strategy="afterInteractive">
+      {/* 초기화는 beforeInteractive로 초기 HTML <head>에 넣어, 첫 page_view가 초기화보다 먼저 실행되지 않게 한다. */}
+      {/* 이 컴포넌트는 app/layout.tsx(루트 레이아웃)에서만 렌더된다. App Router에서는 루트 레이아웃의 beforeInteractive가 허용되며, 아래 규칙은 Pages Router 기준 경고다. */}
+      {/* eslint-disable-next-line @next/next/no-before-interactive-script-outside-document */}
+      <Script id="ga4-init" strategy="beforeInteractive">
         {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 window.gtag = gtag;
