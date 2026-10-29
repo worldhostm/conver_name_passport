@@ -19,3 +19,6 @@
 - 2026-10-29 SDS primitives는 요청한 7종(Button, Input, Text, Tag, Accordion, Tabs, Notification)만 옮기고, 그것들이 import하는 Fieldset·Icon·IconButton·Image·Link를 의존성으로 추가. 나머지는 요청 시 추가.
 - 2026-10-29 SDS reset.css(a/button/input 등 all: unset)는 src/sds.css에 포함하되 globals.css보다 먼저 import해 앱 스타일이 우선하도록 함.
 - 2026-10-29 ProductDetails 예시의 SelectField는 Select primitive 미이식으로 TagToggleGroup으로 대체.
+- 2026-10-29 OG 이미지는 next/og로 빌드 시 생성. 한글은 Google Fonts text= 서브셋을 빌드 시 받아 쓰고, 네트워크 실패 시 라틴 문자만 그려 빌드가 깨지지 않게 함.
+- 2026-10-29 sitemap lastmod는 빌드 시각 대신 CONTENT_UPDATED_AT 상수. 매 빌드마다 바뀌는 lastmod는 신호로 쓸 수 없음.
+- 2026-10-29 가이드 목록은 app/guide/_data.ts 한 곳에서 관리(목차·관련 가이드·sitemap 공유).

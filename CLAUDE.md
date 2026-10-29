@@ -6,7 +6,8 @@
 - lib/analytics/  : GA 이벤트 (events.ts의 track()만 사용)
 - lib/site.ts     : 사이트 이름·URL·출처 링크 상수
 - data/           : 성씨 관용 표기 등 데이터
-- docs/           : analytics.md, decisions.md, changelog.md, components.md(SDS 컴포넌트·props), sds-agents.md(SDS 원본 규칙)
+- docs/           : analytics.md, decisions.md, changelog.md, components.md(SDS 컴포넌트·props), sds-agents.md(SDS 원본 규칙), seo.md(SEO 구현·수동 체크리스트)
+- public/         : 정적 파일(검색엔진 소유 확인 HTML 등). 이미지·아이콘은 app/의 메타데이터 파일 규약을 우선 사용
 - src/            : figma/sds에서 옮긴 디자인 시스템. src/ui/{layout,primitives,compositions,icons,utils,hooks}, src/examples, src/*.css
 새 최상위 폴더를 만들지 말 것.
 
@@ -17,6 +18,10 @@
 - 성씨 표기는 data/surnames.ts에서만 수정
 - 세 번 반복되기 전에는 공통화하지 않기
 - 300줄 넘는 파일은 분리 제안
+
+## SEO
+- 새 페이지는 metadata(title, description, canonical, OG)와 Breadcrumbs를 넣고 app/sitemap.ts에 추가
+- 가이드 내용을 고치면 lib/site.ts의 CONTENT_UPDATED_AT 갱신
 
 ## 분석과 개인정보
 - gtag 직접 호출 금지, track()만 사용 (gtag 로더는 lib/analytics/Analytics.tsx 한 곳)
